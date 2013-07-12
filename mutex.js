@@ -8,13 +8,13 @@ function Mutex () {
      * Current Lock status
      * @type Boolean
      */
-    this.lockStatus = false;
+    this.locked = false;
 
     /**
      * Queue of callbacks to process
      * @type Array
      */
-    this.lockQueue = [];
+    this.waitingQueue = [];
 }
 
 /**
@@ -24,11 +24,11 @@ function Mutex () {
  */
 Mutex.prototype.lock = function(callback)
 {
-    if (this.lockStatus) {
-        this.lockQueue.push(callback);
+    if (this.locked) {
+        this.waitingQueue.push(callback);
     } else {
-        this.lockStatus = true;
-        callback();
+        this.locked = true;
+        setTimeout(callback, 0);
     }
 };
 
@@ -38,10 +38,10 @@ Mutex.prototype.lock = function(callback)
 Mutex.prototype.unlock = function()
 {
     var callback;
-    if (this.lockQueue.length) {
-        callback = this.lockQueue.pop();
-        callback();
+    if (this.waitingQueue.length) {
+        callback = this.waitingQueue.pop();
+        setTimeout(callback, 0);
     } else {
-        this.lockStatus = false;
+        this.locked = false;
     }
 };
