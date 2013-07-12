@@ -8,7 +8,7 @@ A Mutex locking system non-blocking for Javascript
 Download the [library](https://raw.github.com/DawnAngel/mutex.js/master/mutex.js) and include it in your html.
 
 ```html
-<script src="js/three.min.js"></script>
+<script src="js/mutex.js"></script>
 ```
 
 Then you just need to create an instance of the class and use it this way.
