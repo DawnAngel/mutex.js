@@ -3,45 +3,45 @@
  *
  * @author Eric Pinto
  */
-var mutex = window.mutex || {
+function Mutex () {
     /**
      * Current Lock status
      * @type Boolean
      */
-    lockStatus: false,
+    this.lockStatus = false;
 
     /**
      * Queue of callbacks to process
      * @type Array
      */
-    lockQueue: [],
+    this.lockQueue = [];
+}
 
-    /**
-     * Request to execute the "callback" function in a sequencial way
-     *
-     * @param  Function callback
-     */
-    lock: function(callback)
-    {
-        if (mutex.lockStatus) {
-            mutex.lockQueue.push(callback);
-        } else {
-            mutex.lockStatus = true;
-            callback();
-        }
-    },
+/**
+ * Request to execute the "callback" function in a sequencial way
+ *
+ * @param  Function callback
+ */
+Mutex.prototype.lock = function(callback)
+{
+    if (this.lockStatus) {
+        this.lockQueue.push(callback);
+    } else {
+        this.lockStatus = true;
+        callback();
+    }
+};
 
-    /**
-     * Release the lock and execute the next "callback" function queued
-     */
-    unlock: function()
-    {
-        var callback;
-        if (mutex.lockQueue.length) {
-            callback = mutex.lockQueue.pop();
-            callback();
-        } else {
-            mutex.lockStatus = false;
-        }
+/**
+ * Release the lock and execute the next "callback" function queued
+ */
+Mutex.prototype.unlock = function()
+{
+    var callback;
+    if (this.lockQueue.length) {
+        callback = this.lockQueue.pop();
+        callback();
+    } else {
+        this.lockStatus = false;
     }
 };
