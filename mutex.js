@@ -3,7 +3,15 @@
  *
  * @author Eric Pinto
  */
-function Mutex () {
+var Mutex = function(lifo) {
+    /**
+     * Current lifo configuration (Default: false)
+     *   true : Stack Mode (Last In First Out)
+     *   false: Queue Mode (First In First Out)
+     * @type Boolean
+     */
+    this.lifo = lifo || false;
+
     /**
      * Current Lock status
      * @type Boolean
@@ -15,7 +23,7 @@ function Mutex () {
      * @type Array
      */
     this.waitingQueue = [];
-}
+};
 
 /**
  * Request to execute the "callback" function in a sequencial way
@@ -39,7 +47,23 @@ Mutex.prototype.unlock = function()
 {
     var callback;
     if (this.waitingQueue.length) {
-        callback = this.waitingQueue.pop();
+        if (this.lifo) {
+            /**
+             * Stack Mode
+             * a. [1, 2] <- 3
+             * b. [1, 2, 3]
+             * c. [1, 2] -> 3
+             */
+            callback = this.waitingQueue.pop();
+        } else {
+            /**
+             * Queue Mode
+             * a. [1, 2] <- 3
+             * b. [1, 2, 3]
+             * c. 1 <- [2, 3]
+             */
+            callback = this.waitingQueue.shift();
+        }
         setTimeout(callback, 0);
     } else {
         this.locked = false;
